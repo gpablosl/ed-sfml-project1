@@ -1,6 +1,6 @@
 struct Vec2
 {
-    float x{};
+    float x{}; // = 0
     float y{};
 
     Vec2(){}

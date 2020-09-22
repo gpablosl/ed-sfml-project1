@@ -1,6 +1,10 @@
+//class es para cosas provadas
+
+//struct es para cosas que va a ser publicas
+
 #include<iostream>
-#include<SFML/Graphics.hpp>
-#include"Vec2.hh"
+#include <SFML/Graphics.hpp>
+#include "Vec2.hh"
 
 struct Inputs
 {
@@ -9,10 +13,10 @@ struct Inputs
 
     Vec2* keyboardAxis;
     Vec2* joystickAxis;
-    Inputs(){}
+
+    //Constructor
+    Inputs(); 
 
     Vec2* GetKeyboardAxis();
     Vec2* GetJoystickAxis();
-
-
 };
