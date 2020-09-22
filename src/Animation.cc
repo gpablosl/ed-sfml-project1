@@ -1,8 +1,10 @@
 #include "Animation.hh"
+#include<iostream>
 
 //constructor
-Animation::Animation(unsigned short int startFrame, unsigned short int endFrame, sf::Sprite* sprite, float delay)
+Animation::Animation(int cropPosY, int startFrame, int endFrame, sf::Sprite* sprite, float delay)
 {
+    this->cropPosY = cropPosY;
     this->startFrame = startFrame;
     this->endFrame = endFrame;
     this->sprite = sprite;
@@ -12,6 +14,7 @@ Animation::Animation(unsigned short int startFrame, unsigned short int endFrame,
 
 //destructor
 Animation::~Animation(){}
+
 void Animation::Play(float& deltaTime)
 {
     timer += deltaTime;
@@ -28,7 +31,7 @@ void Animation::Play(float& deltaTime)
         
         sprite->setTextureRect(*(new sf::IntRect( 
             sprite->getTextureRect().width * currentFrame, 
-            sprite->getTextureRect().top,  
+            sprite->getTextureRect().height * cropPosY,  
             sprite->getTextureRect().width,  
             sprite->getTextureRect().height)));
                

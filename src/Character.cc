@@ -37,4 +37,14 @@ void Character::FlipSpriteX(float x)
     }
 }
 
+void Character::SetAnimations(Animation** animations)
+{
+    this->animations = animations;
+}
+
+Animation* Character::GetAnimation(int index) const
+{
+    return *(animations + index);
+}
+
 Character::~Character(){}
