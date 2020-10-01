@@ -8,12 +8,12 @@
 			"args": [
 				"-std=c++17",
 				"-Iinclude",
-				"-Iinclude/Audio",
-				"-Iinclude/Graphics",
-				"-Iinclude/Network",
-				"-Iinclude/System",
-				"-Iinclude/Window",
+				"-Isrc/dynamics",
 				"src/*.cc",
+				"src/collision/*.cpp",
+                "src/common/*.cpp",
+                "src/dynamics/*.cpp",
+                "src/rope/*.cpp",
 				"-o",
 				"bin/game1.exe",
 				"lib/libopenal32.a",
@@ -30,10 +30,7 @@
 			"problemMatcher": [
 				"$gcc"
 			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
+			"group": "build"
 		}
 	]
 }
