@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "Animation.hh"
+#include "BoxCollider.hh"
 
 class Character
 {
@@ -13,15 +14,20 @@ class Character
         float scaleX;
         float scaleY;
         Animation** animations;
+        BoxCollider* boxCollider;
+        float tileBaseWidth;
+        float tileBaseHeight;
 
 
-        void InitSprite();
+        void InitSprite(b2World*&);
 
     public:
-        Character(sf::Texture*&, float, float, float, float, float, float);
+        Character(sf::Texture*&, float, float, float, float, float, float, b2World*&);
         ~Character();
-        sf::Sprite* GetSprite() const;
+        sf::Sprite* GetSprite();
         void FlipSpriteX(float);
         void SetAnimations(Animation**);
         Animation* GetAnimation(int) const;
+        void Move(b2Vec2*);
+        BoxCollider* GetCollider() const;
 };

@@ -1,9 +1,9 @@
+  
 //class es para cosas provadas
 
 //struct es para cosas que va a ser publicas
 
 #include<iostream>
-#include <cmath>
 #include <SFML/Graphics.hpp>
 #include "Vec2.hh"
 
