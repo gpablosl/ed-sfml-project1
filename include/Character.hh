@@ -1,35 +1,23 @@
+#pragma once
+
 #include <SFML/Graphics.hpp>
 #include "Animation.hh"
 #include "BoxCollider.hh"
+#include "GameObject.hh"
 
-class Character
+class Character : public GameObject 
 {
     private:
-        sf::Texture* texture;
-        sf::Sprite* sprite;
-        float cropPosX;  
-        float cropPosY;
-        float cropWidth;
-        float cropHeight;
-        float scaleX;
-        float scaleY;
+        
         Animation** animations;
-        BoxCollider* boxCollider;
-        float tileBaseWidth;
-        float tileBaseHeight;
-        sf::RenderWindow* window; 
 
-        void InitSprite(b2World*&);
+        void InitSprite(b2World*&, b2Vec2*);
 
     public:
-        Character(sf::Texture*&, float, float, float, float, float, float, b2World*&, sf::RenderWindow*&);
+        Character(sf::Texture*&, float, float, float, float, float, float, b2Vec2*, b2BodyType, b2World*&, sf::RenderWindow*&);
         ~Character();
-        sf::Sprite* GetSprite();
         void FlipSpriteX(float);
         void SetAnimations(Animation**);
         Animation* GetAnimation(int) const;
         void Move(b2Vec2*);
-        BoxCollider* GetCollider() const;
-        void Update();
-        void SetPosition(float, float);
 };

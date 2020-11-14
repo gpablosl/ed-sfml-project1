@@ -1,7 +1,8 @@
-  
 //class es para cosas provadas
 
 //struct es para cosas que va a ser publicas
+
+#pragma once
 
 #include<iostream>
 #include <SFML/Graphics.hpp>

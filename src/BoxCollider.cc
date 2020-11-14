@@ -1,6 +1,6 @@
 #include "BoxCollider.hh"
 
-BoxCollider::BoxCollider(float posX, float posY, sf::Color* borderColor, float width, float height, Rigidbody* rigidbody, sf::Sprite* parentSprite)
+BoxCollider::BoxCollider(float posX, float posY, sf::Color* borderColor, float width, float height, Rigidbody*& rigidbody, sf::Sprite*& parentSprite)
 {
     this->posX = posX;
     this->posY = posY;
@@ -13,7 +13,14 @@ BoxCollider::BoxCollider(float posX, float posY, sf::Color* borderColor, float w
     InitShape();
 }
 
-BoxCollider::~BoxCollider(){}
+BoxCollider::~BoxCollider()
+{
+    /*delete borderColor;
+    delete boxShape;
+    rigidbody->~Rigidbody();
+    delete this;*/
+    rigidbody->~Rigidbody();
+}
 
 void BoxCollider::InitShape()
 {

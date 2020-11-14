@@ -2,25 +2,38 @@
 #include <SFML/Graphics.hpp>
 #include<box2d/box2d.h>
 
+#include "Maze.hh"
 #include "Inputs.hh"
 #include "Character.hh"
+#include "Tile.hh"
+#include "GameObject.hh"
+#include "ContactListener.hh"
+#include "Score.hh"
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
 #define GAME_NAME "Roguelike game"
 #define TILES1 "assets/sprites/tiles1.png"
 #define TILES2 "assets/sprites/tiles2.png"
 #define TILES3 "assets/sprites/tiles3.png"
+#define FONT1 "assets/fonts/8-bit Arcade In.ttf"
+#define ICON "assets/cheems.ico"
 #define SPRITE_SCALE 4.f
 #define FPS 120
-#define PLAYER_MOVESPEED 3.0f
+#define PLAYER_MOVESPEED 5.0f
 
 int main()
 {
     //esto es la ventana de tu grafico
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), GAME_NAME);
+    sf::Image* iconImage{new sf::Image()};
+    iconImage->loadFromFile(ICON);
+    window->setIcon(64, 64, iconImage->getPixelsPtr());
     //aqui vas a guardar los eventos dentro de la ventana, eje: teclado, mouse, etc.
     sf::Event event;
+
+    Score* score{new Score(FONT1, "Score ", 24, new sf::Vector2f(25, 5), new sf::Color(255, 255, 255), window)};
+    
 
     //physics declaration
     b2Vec2* gravity{new b2Vec2(0.f, 0.f)};
@@ -43,139 +56,10 @@ int main()
     const float tileBaseWidth{16 * SPRITE_SCALE};
     const float tileBaseHeight{16 * SPRITE_SCALE};
 
-    //Tiles
-
-    sf::Sprite* tileWall_1_1{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 1, 16 * 1, 16, 16)))};
-    tileWall_1_1->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    sf::Sprite* tileWall_1_2{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 1, 16 * 2, 16, 16)))};
-    tileWall_1_2->setScale(SPRITE_SCALE, SPRITE_SCALE);
-    
-    sf::Sprite* tileWall_1_3{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 1, 16 * 3, 16, 16)))};
-    tileWall_1_3->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    sf::Sprite* tileGround_1_4{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 1, 16 * 4, 16, 16)))};
-    tileGround_1_4->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    sf::Sprite* tileGround_2_4{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 2, 16 * 4, 16, 16)))};
-    tileGround_2_4->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    sf::Sprite* tileGround_3_4{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 3, 16 * 4, 16, 16)))};
-    tileGround_3_4->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    sf::Sprite* tileGround_1_5{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 1, 16 * 5, 16, 16)))};
-    tileGround_1_5->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    sf::Sprite* tileGround_2_5{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 2, 16 * 5, 16, 16)))};
-    tileGround_2_5->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    sf::Sprite* tileGround_3_5{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 3, 16 * 5, 16, 16)))};
-    tileGround_3_5->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    sf::Sprite* tileGround_1_6{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 1, 16 * 6, 16, 16)))};
-    tileGround_1_6->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    sf::Sprite* tileGround_2_6{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 2, 16 * 6, 16, 16)))};
-    tileGround_2_6->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    sf::Sprite* tileGround_3_6{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 3, 16 * 6, 16, 16)))};
-    tileGround_3_6->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    //Items
-    sf::Sprite* treasureSprite{new sf::Sprite(*tilesTexture3, *(new sf::IntRect(16 * 19, 16 * 19, 16, 16)))};
-    treasureSprite->setScale(SPRITE_SCALE, SPRITE_SCALE);
-    treasureSprite->setPosition(400, 400);
-
-    BoxCollider* treasureCollider = new BoxCollider(300, 250, new sf::Color(0, 255, 0, 255), 16, 16,
-    new Rigidbody(world, b2BodyType::b2_staticBody, new b2Vec2(400, 400), tileBaseWidth / 2, tileBaseHeight / 2, 1, 0, 0),
-    treasureSprite);
-
-    treasureCollider->GetBoxShape()->setScale(SPRITE_SCALE, SPRITE_SCALE);
-
-    treasureCollider->GetBoxShape()->setPosition(treasureSprite->getPosition());
-
-
-
-    //w = tileWall_1_1      q = tileWall_1_2    e =  tileWall_1_3   
-
-    //g = tileGround_1_4    f = tileGround_2_4  d = tileGround_3_4
-
-    //a = tileGround_1_5    s = tileGround_2_5  z = tileGround_3_5
-
-    //x = tileGround_1_6    c = tileGround_2_6  v = tileGround_3_6
-
-    char** tiles 
-    {
-        new char*[10]
-        {
-            new char[13]{'w', 'q', 'e', 'w', 'q', 'e', 'w', 'q', 'e', 'w', 'q', 'e', 'w'},
-            new char[13]{'g', 'g', 'd', 'g', 'f', 'g', 'g', 'f', 'd', 'g', 'f', 'd', 'g'},
-            new char[13]{'g', 's', 'd', 'g', 'g', 'x', 'g', 'f', 'g', 'g', 'f', 'c', 'g'},
-            new char[13]{'g', 'g', 'd', 'g', 'g', 'd', 'g', 'g', 'd', 's', 'g', 'd', 'g'},
-            new char[13]{'z', 'g', 'g', 'g', 'g', 'z', 'g', 'g', 'd', 'g', 'g', 'x', 'g'},
-            new char[13]{'g', 'g', 'g', 'g', 'g', 'd', 'g', 'g', 'd', 'g', 'f', 'g', 'g'},
-            new char[13]{'g', 'f', 'd', 's', 'f', 'd', 'g', 'f', 'g', 'g', 'f', 'd', 'g'},
-            new char[13]{'g', 'a', 'x', 'g', 'f', 'g', 'g', 'g', 'g', 's', 'v', 'g', 'g'},
-            new char[13]{'g', 'f', 'g', 'g', 'f', 'g', 'g', 'f', 'd', 'g', 'f', 'd', 'g'},
-            new char[13]{'g', 's', 'd', 'g', 'f', 'd', 'g', 'f', 'd', 'g', 'f', 'd', 'g'}
-        }
-    };
-
-    std::vector<sf::Sprite> maze;
-
-    for(int i = 0; i < 10; i++)
-    {
-        for(int j = 0; j < 13; j++)
-        {
-            char& tile = *(*(tiles + i) + j);
-
-            switch (tile)
-            {
-                case 'w':
-                    maze.push_back(*tileWall_1_1);
-                    break;
-                case 'q':
-                    maze.push_back(*tileWall_1_2);
-                    break;
-                case 'e':
-                    maze.push_back(*tileWall_1_3);
-                    break;
-                case 'g':
-                    maze.push_back(*tileGround_1_4);
-                    break;
-                case 'f':
-                    maze.push_back(*tileGround_2_4);
-                    break;
-                case 'd':
-                    maze.push_back(*tileGround_3_4);
-                    break;    
-                case 'a':
-                    maze.push_back(*tileGround_1_5);
-                    break;
-                case 's':
-                    maze.push_back(*tileGround_2_5);
-                    break;
-                case 'z':
-                    maze.push_back(*tileGround_3_5);
-                    break;
-                case 'x':
-                    maze.push_back(*tileGround_1_6);
-                    break;
-                case 'c':
-                    maze.push_back(*tileGround_2_6);
-                    break;
-                case 'v':
-                    maze.push_back(*tileGround_3_6);
-                    break;              
-                default:
-                    break;
-            }
-            maze.back().move(tileBaseWidth * j, tileBaseHeight * i);
-        }
-    }
 
     //Main player
-    Character* character1{new Character(tilesTexture2, 16 * 1, 16 * 5, 16, 16, SPRITE_SCALE, SPRITE_SCALE, world, window)};
+    Character* character1{new Character(tilesTexture2, 16 * 1, 16 * 5, 16, 16, 
+    SPRITE_SCALE, SPRITE_SCALE, new b2Vec2(400, 300), b2BodyType::b2_dynamicBody, world, window)};
     character1->SetAnimations(
         new Animation*[2]
         {
@@ -183,8 +67,35 @@ int main()
             new Animation(6, 0, 5, character1->GetSprite(), 80.f)
         }
     );
+    
+    character1->SetTagName("player");
+    //character1->SetDebug(true);
 
-    character1->SetPosition(400, 300);
+    unsigned int N{17}, M{30};
+    Maze* maze1{new Maze(N, M, SPRITE_SCALE, 16, tilesTexture3, "assets/mazes/maze1.txt", world)};
+    Maze* maze2{new Maze(N, M, SPRITE_SCALE, 16, tilesTexture3, "assets/mazes/maze2.txt", world)};
+    Maze*& currentMaze{*&maze1};
+
+    GameObject* treasure{new GameObject(tilesTexture3, 16 * 19, 16 * 19, 16, 16, 
+    SPRITE_SCALE, SPRITE_SCALE, new b2Vec2(400, 400), b2BodyType::b2_staticBody, world, window)}; 
+    treasure->SetTagName("item");
+    GameObject* treasure2{new GameObject(tilesTexture3, 16 * 19, 16 * 19, 16, 16, 
+    SPRITE_SCALE, SPRITE_SCALE, new b2Vec2(200, 400), b2BodyType::b2_staticBody, world, window)}; 
+    treasure2->SetTagName("item");
+
+    GameObject* stairs{new GameObject(tilesTexture3, 16 * 3, 16 * 6, 16, 16, 
+    SPRITE_SCALE, SPRITE_SCALE, new b2Vec2(510, 510), b2BodyType::b2_staticBody, world, window)};
+    stairs->SetTagName("stairs");
+    //stairs->SetDebug(true);
+
+    std::vector<GameObject*>* items{new std::vector<GameObject*>()};
+    items->push_back(treasure);
+    items->push_back(treasure2);
+    items->push_back(stairs);
+
+    ContactListener* conctactListener{new ContactListener(score, items)};
+
+    world->SetContactListener(conctactListener);
 
     //esto es el loop principal, mientras la ventana este abierta, esto se va ejecutar.
     while (window->isOpen())
@@ -198,13 +109,22 @@ int main()
                 window->close();
             }
         }
+
+        switch (conctactListener->GetSceneIndex())
+        {
+            case 0:
+                currentMaze = maze1;
+                break;
+            case 1:
+                currentMaze = maze2;
+                break;
+            default:
+                currentMaze = maze1;
+                break;
+        }
         
         Vec2* keyboardAxis{inputs->GetKeyboardAxis()};
         Vec2* joystickAxis{inputs->GetJoystickAxis()};
-   
-        //player sigue la posicion del cuerpo de física}
-        treasureCollider->UpdatePhysics();
-
 
         if(sf::Joystick::isConnected(0))
         {
@@ -239,19 +159,24 @@ int main()
             }
         }
 
-
         window->clear(*(new sf::Color(150, 100, 0, 255)));//lipiar la pantalla
 
-        for(auto& mazeTile : maze)
+        for(auto& mazeTile : *currentMaze->GetContainer())
         {
-            window->draw(mazeTile);
+            window->draw(*mazeTile->GetSprite());
         }
 
-        //character1Collider->GetBoxShape()->setPosition(character1->GetSprite()->getPosition());
+        //stairs->Update();
         
+        for(auto& item : *items)
+        {
+            item->Update();
+        }
+
         character1->Update();
-        window->draw(*treasureSprite);
-        window->draw(*treasureCollider->GetBoxShape());
+
+        score->Update();
+
         window->display(); //mostrar en pantalla lo que se va dibujar
 
         sf::Time timeElapsed = clock->getElapsedTime();
@@ -260,8 +185,6 @@ int main()
         world->Step(1.f / 100 * deltaTime, 8, 8);
         clock->restart();
         
-        //std::cout << playerBody->GetPosition().x << " " << playerBody->GetPosition().y << std::endl; 
-
         //std::cout << "delta time: " << deltaTime << std::endl;
 
         delete keyboardAxis;

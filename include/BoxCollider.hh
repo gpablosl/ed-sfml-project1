@@ -1,3 +1,5 @@
+#pragma once
+
 #include<SFML/Graphics.hpp>
 #include "Rigidbody.hh"
 
@@ -16,7 +18,7 @@ class BoxCollider
         void InitShape();
         
     public:
-        BoxCollider(float, float, sf::Color*, float, float, Rigidbody*, sf::Sprite*);
+        BoxCollider(float, float, sf::Color*, float, float, Rigidbody*&, sf::Sprite*&);
         ~BoxCollider();
 
         sf::RectangleShape* GetBoxShape() const;
@@ -27,3 +29,4 @@ class BoxCollider
 
         b2Vec2 GetBodyPosition() const;
 };
+
